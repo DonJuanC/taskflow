@@ -3,6 +3,8 @@ import { Navbar } from "./components/Navbar/Navbar";
 import { Register } from "./pages/Register/Register";
 import { Login } from "./pages/Login/Login";
 import { ProtectedRoute } from "./routes/ProtectedRoute";
+import { TaskForm } from "./components/TaskForm/TaskForm";
+import { TaskList } from "./components/TaskList/TaskList";
 
 function App() {
   return (
@@ -13,7 +15,10 @@ function App() {
           path="/"
           element={
             <ProtectedRoute>
-              <div>Home (temporal)</div>
+              <>
+                <TaskForm />
+                <TaskList />
+              </>
             </ProtectedRoute>
           }
         />
