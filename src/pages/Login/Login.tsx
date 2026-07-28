@@ -81,6 +81,8 @@ export function Login() {
         />
         {fieldErrors.password && <p>{fieldErrors.password}</p>}
 
+        {firebaseError && <p>{firebaseError}</p>}
+
         <button type="submit" disabled={loading}>
           {loading ? "Ingresando..." : "Ingresar"}
         </button>
