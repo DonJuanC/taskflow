@@ -5,6 +5,7 @@ import { Login } from "./pages/Login/Login";
 import { ProtectedRoute } from "./routes/ProtectedRoute";
 import { TaskForm } from "./components/TaskForm/TaskForm";
 import { TaskList } from "./components/TaskList/TaskList";
+import { SendSummaryButton } from "./components/SendSummary/SendSummaryButton";
 
 function App() {
   return (
@@ -17,6 +18,7 @@ function App() {
             <ProtectedRoute>
               <>
                 <TaskForm />
+                <SendSummaryButton />
                 <TaskList />
               </>
             </ProtectedRoute>
