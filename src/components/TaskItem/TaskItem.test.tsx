@@ -74,6 +74,9 @@ describe("TaskItem", () => {
     expect(updateTask).toHaveBeenCalledWith("task-1", {
       title: "Comprar pan integral",
       description: "Panaderia nueva",
+      dueDate: null,
+      priority: null,
+      frequency: null,
     });
     expect(await screen.findByRole("button", { name: /editar/i })).toBeInTheDocument();
   });
@@ -107,6 +110,9 @@ describe("TaskItem", () => {
     expect(updateTask).toHaveBeenCalledWith("task-1", {
       title: "Comprar pan integral",
       description: "Del super de la esquina",
+      dueDate: null,
+      priority: null,
+      frequency: null,
     });
     expect(await screen.findByRole("button", { name: /editar/i })).toBeInTheDocument();
   });
@@ -161,8 +167,35 @@ describe("TaskItem", () => {
     expect(updateTask).toHaveBeenCalledWith("task-1", {
       title: "Comprar pan",
       description: "Del super de la esquina",
+      dueDate: null,
       priority: "low",
       frequency: "daily",
+    });
+  });
+
+  it("quitar la prioridad y la frecuencia en modo edicion las borra (envia null)", async () => {
+    vi.mocked(updateTask).mockResolvedValueOnce(undefined);
+    const user = userEvent.setup();
+    render(
+      <TaskItem task={{ ...baseTask, priority: "high", frequency: "weekly" }} />,
+    );
+
+    await user.click(screen.getByRole("button", { name: /editar/i }));
+    // "Ninguna" aparece una vez por cada picker (prioridad y frecuencia).
+    const [prioridadNinguna, frecuenciaNinguna] = screen.getAllByRole(
+      "button",
+      { name: "Ninguna" },
+    );
+    await user.click(prioridadNinguna);
+    await user.click(frecuenciaNinguna);
+    await user.click(screen.getByRole("button", { name: /guardar/i }));
+
+    expect(updateTask).toHaveBeenCalledWith("task-1", {
+      title: "Comprar pan",
+      description: "Del super de la esquina",
+      dueDate: null,
+      priority: null,
+      frequency: null,
     });
   });
 

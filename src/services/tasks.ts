@@ -3,6 +3,7 @@ import {
   addDoc,
   updateDoc,
   deleteDoc,
+  deleteField,
   doc,
   serverTimestamp,
   getFirestore,
@@ -40,13 +41,23 @@ export async function updateTask(
     description: string;
     completed: boolean;
     order: number;
-    dueDate: Date;
-    priority: Task["priority"];
-    frequency: Task["frequency"];
+    // `null` es una señal explícita de "vaciar este campo" (ej. quitar la
+    // fecha de vencimiento de una tarea que ya tenía una). Firestore no
+    // acepta `undefined` como valor, así que acá se traduce a deleteField().
+    dueDate: Date | null;
+    priority: Task["priority"] | null;
+    frequency: Task["frequency"] | null;
   }>,
 ) {
   const taskRef = doc(db, "tasks", taskId);
-  await updateDoc(taskRef, data);
+  const { dueDate, priority, frequency, ...rest } = data;
+
+  await updateDoc(taskRef, {
+    ...rest,
+    ...(dueDate !== undefined && { dueDate: dueDate ?? deleteField() }),
+    ...(priority !== undefined && { priority: priority ?? deleteField() }),
+    ...(frequency !== undefined && { frequency: frequency ?? deleteField() }),
+  });
 }
 
 export async function deleteTask(taskId: string) {

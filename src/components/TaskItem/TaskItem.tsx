@@ -65,15 +65,16 @@ export function TaskItem({
   async function handleSaveEdit() {
     if (!title.trim()) return;
 
-    const updates: Parameters<typeof updateTask>[1] = {
+    // Se manda explícitamente `null` cuando el campo quedó vacío, para que
+    // updateTask lo borre en Firestore en vez de dejar el valor viejo (si
+    // solo se omitiera la clave, el campo nunca se actualizaría).
+    await updateTask(task.id, {
       title: title.trim(),
       description: description.trim(),
-    };
-    if (dueDate) updates.dueDate = parseDateInput(dueDate);
-    if (priority) updates.priority = priority;
-    if (frequency) updates.frequency = frequency;
-
-    await updateTask(task.id, updates);
+      dueDate: dueDate ? parseDateInput(dueDate) : null,
+      priority: priority || null,
+      frequency: frequency || null,
+    });
     setIsEditing(false);
   }
 
