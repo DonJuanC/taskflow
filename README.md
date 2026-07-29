@@ -6,6 +6,8 @@ SPA de gestión de tareas con autenticación de usuarios, persistencia en la nub
 
 **Demo en vivo:** https://taskflow-smoky-sigma.vercel.app
 
+**Guía completa de construcción:** [PI M4 TaskFlow en Notion](https://app.notion.com/p/3ac745b6d1db81a7b6a1d2827c2ea742) — cada decisión, concepto, bloque de código y bug real del proyecto, de principio a fin.
+
 Flujo completo verificado en producción: registro, login (email/password y Google), CRUD de tareas, filtros, reordenamiento por drag & drop, y envío de resumen por email.
 
 ## Stack técnico
