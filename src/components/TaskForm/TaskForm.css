@@ -1,0 +1,48 @@
+.task-form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  padding: var(--space-4);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  transition:
+    box-shadow var(--transition-fast),
+    border-color var(--transition-fast);
+}
+
+.task-form:focus-within {
+  border-color: var(--color-border-strong);
+  box-shadow: var(--shadow-sm);
+}
+
+.task-form-row {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.task-form > .btn {
+  align-self: flex-start;
+}
+
+@media (min-width: 640px) {
+  .task-form-row-main {
+    flex-direction: row;
+  }
+  .task-form-row-main .field:first-child {
+    flex: 1;
+  }
+  .task-form-row-main .field:last-child {
+    flex: 1.4;
+  }
+
+  .task-form-row-meta {
+    flex-direction: row;
+    align-items: flex-end;
+  }
+  .task-form-row-meta .field:first-child {
+    flex: none;
+    width: 230px;
+  }
+}

@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import { render, screen, waitFor } from "@testing-library/react";
+import { render, screen, waitFor, fireEvent } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { TaskForm } from "./TaskForm";
 import { createTask } from "../../services/tasks";
@@ -32,13 +32,79 @@ describe("TaskForm", () => {
     const user = userEvent.setup();
     render(<TaskForm />);
 
-    await user.type(screen.getByPlaceholderText("Título de la tarea"), "Comprar pan");
-    await user.type(screen.getByPlaceholderText("Descripción (opcional)"), "Del super");
+    await user.type(
+      screen.getByPlaceholderText("Título de la tarea"),
+      "Comprar pan",
+    );
+    await user.type(
+      screen.getByPlaceholderText("Descripción (opcional)"),
+      "Del super",
+    );
     await user.click(screen.getByRole("button", { name: /agregar tarea/i }));
 
     await waitFor(() => {
-      expect(createTask).toHaveBeenCalledWith("test-uid", "Comprar pan", "Del super");
+      expect(createTask).toHaveBeenCalledWith(
+        "test-uid",
+        "Comprar pan",
+        "Del super",
+        undefined,
+        undefined,
+        undefined,
+      );
     });
+  });
+
+  it("incluye fecha, prioridad y frecuencia cuando el usuario los completa", async () => {
+    vi.mocked(createTask).mockResolvedValueOnce(undefined);
+    const user = userEvent.setup();
+    render(<TaskForm />);
+
+    await user.type(
+      screen.getByPlaceholderText("Título de la tarea"),
+      "Pagar arriendo",
+    );
+
+    fireEvent.change(screen.getByLabelText("Fecha y hora"), {
+      target: { value: "2026-08-15T14:30" },
+    });
+    await user.click(screen.getByRole("button", { name: "Alta" }));
+    await user.click(screen.getByRole("button", { name: "Mensual" }));
+
+    await user.click(screen.getByRole("button", { name: /agregar tarea/i }));
+
+    await waitFor(() => {
+      expect(createTask).toHaveBeenCalledWith(
+        "test-uid",
+        "Pagar arriendo",
+        "",
+        new Date(2026, 7, 15, 14, 30),
+        "high",
+        "monthly",
+      );
+    });
+  });
+
+  it("limpia el formulario despues de crear la tarea", async () => {
+    vi.mocked(createTask).mockResolvedValueOnce(undefined);
+    const user = userEvent.setup();
+    render(<TaskForm />);
+
+    await user.type(
+      screen.getByPlaceholderText("Título de la tarea"),
+      "Comprar pan",
+    );
+    await user.click(screen.getByRole("button", { name: "Media" }));
+    await user.click(screen.getByRole("button", { name: /agregar tarea/i }));
+
+    await waitFor(() => {
+      expect(
+        screen.getByPlaceholderText("Título de la tarea"),
+      ).toHaveValue("");
+    });
+    expect(screen.getByRole("button", { name: "Media" })).toHaveAttribute(
+      "aria-pressed",
+      "false",
+    );
   });
 
   it("muestra un error si createTask falla", async () => {
@@ -46,7 +112,10 @@ describe("TaskForm", () => {
     const user = userEvent.setup();
     render(<TaskForm />);
 
-    await user.type(screen.getByPlaceholderText("Título de la tarea"), "Comprar pan");
+    await user.type(
+      screen.getByPlaceholderText("Título de la tarea"),
+      "Comprar pan",
+    );
     await user.click(screen.getByRole("button", { name: /agregar tarea/i }));
 
     expect(

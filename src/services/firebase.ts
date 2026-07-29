@@ -1,6 +1,5 @@
 import { initializeApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
-import { getFirestore } from "firebase/firestore";
 
 const firebaseConfig = {
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
@@ -11,7 +10,11 @@ const firebaseConfig = {
   appId: import.meta.env.VITE_FIREBASE_APP_ID,
 };
 
-const app = initializeApp(firebaseConfig);
-
+// Firestore NO se inicializa acá a propósito: este archivo lo importan
+// Login/Register/Navbar/AuthContext (auth es necesario desde el primer
+// render). Si "firebase/firestore" se cargara desde acá, quedaría en el
+// bundle inicial aunque el usuario nunca llegue a ver una tarea. La
+// inicialización de Firestore vive en services/tasks.ts, que solo se carga
+// cuando se entra a "/" (ver el lazy() en App.tsx).
+export const app = initializeApp(firebaseConfig);
 export const auth = getAuth(app);
-export const db = getFirestore(app);

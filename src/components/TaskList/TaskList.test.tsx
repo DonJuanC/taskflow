@@ -1,5 +1,6 @@
 import { describe, it, expect, vi } from "vitest";
 import { render, screen } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 import { TaskList } from "./TaskList";
 import { useTasks } from "../../hooks/useTasks";
 import type { Task } from "../../types/task";
@@ -68,5 +69,66 @@ describe("TaskList", () => {
     expect(screen.getByText("Comprar pan")).toBeInTheDocument();
     expect(screen.getByText("Pagar servicios")).toBeInTheDocument();
     expect(screen.getAllByRole("listitem")).toHaveLength(2);
+  });
+
+  it("el filtro Pendientes solo muestra tareas sin completar", async () => {
+    vi.mocked(useTasks).mockReturnValue({ tasks: sampleTasks, loading: false, error: "" });
+    const user = userEvent.setup();
+    render(<TaskList />);
+
+    await user.click(screen.getByRole("button", { name: "Pendientes" }));
+
+    expect(screen.getByText("Comprar pan")).toBeInTheDocument();
+    expect(screen.queryByText("Pagar servicios")).not.toBeInTheDocument();
+  });
+
+  it("el filtro Completadas solo muestra tareas completadas", async () => {
+    vi.mocked(useTasks).mockReturnValue({ tasks: sampleTasks, loading: false, error: "" });
+    const user = userEvent.setup();
+    render(<TaskList />);
+
+    await user.click(screen.getByRole("button", { name: "Completadas" }));
+
+    expect(screen.getByText("Pagar servicios")).toBeInTheDocument();
+    expect(screen.queryByText("Comprar pan")).not.toBeInTheDocument();
+  });
+
+  it("muestra un mensaje especifico cuando el filtro no tiene resultados", async () => {
+    vi.mocked(useTasks).mockReturnValue({
+      tasks: [sampleTasks[0]],
+      loading: false,
+      error: "",
+    });
+    const user = userEvent.setup();
+    render(<TaskList />);
+
+    await user.click(screen.getByRole("button", { name: "Completadas" }));
+
+    expect(
+      screen.getByText("No tienes tareas completadas."),
+    ).toBeInTheDocument();
+  });
+
+  it("deshabilita el drag & drop cuando el filtro no es Todas", async () => {
+    vi.mocked(useTasks).mockReturnValue({ tasks: sampleTasks, loading: false, error: "" });
+    const user = userEvent.setup();
+    render(<TaskList />);
+
+    await user.click(screen.getByRole("button", { name: "Pendientes" }));
+
+    const handles = screen.getAllByRole("button", { name: "Reordenar tarea" });
+    for (const handle of handles) {
+      expect(handle).toBeDisabled();
+    }
+  });
+
+  it("el drag & drop esta habilitado con el filtro Todas", () => {
+    vi.mocked(useTasks).mockReturnValue({ tasks: sampleTasks, loading: false, error: "" });
+    render(<TaskList />);
+
+    const handles = screen.getAllByRole("button", { name: "Reordenar tarea" });
+    for (const handle of handles) {
+      expect(handle).toBeEnabled();
+    }
   });
 });

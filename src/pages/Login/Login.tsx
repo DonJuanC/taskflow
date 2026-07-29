@@ -9,6 +9,9 @@ import { auth } from "../../services/firebase";
 import { validateLogin, type LoginFormErrors } from "../../utils/validateLogin";
 import { getAuthErrorMessage } from "../../features/auth/authErrors";
 import { useAuth } from "../../hooks/useAuth";
+import { Input } from "../../components/ui/Input/Input";
+import { Button } from "../../components/ui/Button/Button";
+import "../../styles/auth.css";
 
 export function Login() {
   const [email, setEmail] = useState("");
@@ -61,40 +64,60 @@ export function Login() {
   }
 
   return (
-    <div>
-      <form onSubmit={handleSubmit}>
-        <h1>Iniciar sesión</h1>
+    <div className="auth-page">
+      <div className="auth-brand">
+        <span className="auth-brand-mark">TaskFlow</span>
+        <p className="auth-brand-tagline">
+          Organiza tus tareas con claridad. Simple, rápido, tuyo.
+        </p>
+      </div>
 
-        <input
-          type="email"
-          placeholder="Correo"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-        />
-        {fieldErrors.email && <p>{fieldErrors.email}</p>}
+      <div className="auth-panel">
+        <div className="auth-card">
+          <h1>Iniciar sesión</h1>
 
-        <input
-          type="password"
-          placeholder="Contraseña"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-        />
-        {fieldErrors.password && <p>{fieldErrors.password}</p>}
+          <form onSubmit={handleSubmit} className="auth-form" noValidate>
+            <Input
+              type="email"
+              placeholder="Correo"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              error={fieldErrors.email}
+            />
 
-        {firebaseError && <p>{firebaseError}</p>}
+            <Input
+              type="password"
+              placeholder="Contraseña"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              error={fieldErrors.password}
+            />
 
-        <button type="submit" disabled={loading}>
-          {loading ? "Ingresando..." : "Ingresar"}
-        </button>
-      </form>
+            {firebaseError && <p className="form-error">{firebaseError}</p>}
 
-      <button type="button" onClick={handleGoogleLogin} disabled={loading}>
-        Continuar con Google
-      </button>
+            <Button type="submit" disabled={loading}>
+              {loading ? "Ingresando..." : "Ingresar"}
+            </Button>
+          </form>
 
-      <p>
-        ¿No tienes cuenta? <Link to="/register">Regístrate</Link>
-      </p>
+          <div className="auth-divider">
+            <span>o</span>
+          </div>
+
+          <Button
+            variant="secondary"
+            type="button"
+            onClick={handleGoogleLogin}
+            disabled={loading}
+          >
+            Continuar con Google
+          </Button>
+
+          <p className="auth-footer">
+            ¿No tienes cuenta? <Link to="/register">Regístrate</Link>
+          </p>
+        </div>
+      </div>
     </div>
   );
 }

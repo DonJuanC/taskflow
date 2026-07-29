@@ -3,6 +3,7 @@ import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { TaskItem } from "./TaskItem";
 import { updateTask, deleteTask } from "../../services/tasks";
+import { formatDateDisplay } from "../../utils/date";
 import type { Task } from "../../types/task";
 
 vi.mock("../../services/tasks", () => ({
@@ -91,5 +92,93 @@ describe("TaskItem", () => {
 
     expect(updateTask).not.toHaveBeenCalled();
     expect(screen.getByText("Comprar pan")).toBeInTheDocument();
+  });
+
+  it("presionar Enter en modo edicion guarda los cambios", async () => {
+    vi.mocked(updateTask).mockResolvedValueOnce(undefined);
+    const user = userEvent.setup();
+    render(<TaskItem task={baseTask} />);
+
+    await user.click(screen.getByRole("button", { name: /editar/i }));
+    const [titleInput] = screen.getAllByRole("textbox");
+    await user.clear(titleInput);
+    await user.type(titleInput, "Comprar pan integral{Enter}");
+
+    expect(updateTask).toHaveBeenCalledWith("task-1", {
+      title: "Comprar pan integral",
+      description: "Del super de la esquina",
+    });
+    expect(await screen.findByRole("button", { name: /editar/i })).toBeInTheDocument();
+  });
+
+  it("presionar Escape en modo edicion cancela sin guardar", async () => {
+    const user = userEvent.setup();
+    render(<TaskItem task={baseTask} />);
+
+    await user.click(screen.getByRole("button", { name: /editar/i }));
+    const [titleInput] = screen.getAllByRole("textbox");
+    await user.type(titleInput, "{Escape}");
+
+    expect(updateTask).not.toHaveBeenCalled();
+    expect(screen.getByRole("button", { name: /editar/i })).toBeInTheDocument();
+  });
+
+  it("muestra la prioridad, la frecuencia y la fecha cuando la tarea las tiene", () => {
+    const dueDate = new Date(2026, 7, 15);
+    render(
+      <TaskItem
+        task={{
+          ...baseTask,
+          priority: "high",
+          frequency: "weekly",
+          dueDate,
+        }}
+      />,
+    );
+
+    expect(screen.getByText("Alta")).toBeInTheDocument();
+    expect(screen.getByText("Semanal")).toBeInTheDocument();
+    expect(screen.getByText(formatDateDisplay(dueDate))).toBeInTheDocument();
+  });
+
+  it("no muestra la fila de metadatos cuando la tarea no tiene fecha, prioridad ni frecuencia", () => {
+    render(<TaskItem task={baseTask} />);
+
+    expect(screen.queryByText("Alta")).not.toBeInTheDocument();
+    expect(screen.queryByText("Baja")).not.toBeInTheDocument();
+  });
+
+  it("guardar en modo edicion incluye la prioridad y la frecuencia elegidas", async () => {
+    vi.mocked(updateTask).mockResolvedValueOnce(undefined);
+    const user = userEvent.setup();
+    render(<TaskItem task={baseTask} />);
+
+    await user.click(screen.getByRole("button", { name: /editar/i }));
+    await user.click(screen.getByRole("button", { name: "Baja" }));
+    await user.click(screen.getByRole("button", { name: "Diaria" }));
+    await user.click(screen.getByRole("button", { name: /guardar/i }));
+
+    expect(updateTask).toHaveBeenCalledWith("task-1", {
+      title: "Comprar pan",
+      description: "Del super de la esquina",
+      priority: "low",
+      frequency: "daily",
+    });
+  });
+
+  it("el handle de arrastrar se deshabilita cuando sortable es false", () => {
+    render(<TaskItem task={baseTask} sortable={false} />);
+
+    expect(
+      screen.getByRole("button", { name: "Reordenar tarea" }),
+    ).toBeDisabled();
+  });
+
+  it("el handle de arrastrar esta habilitado por defecto", () => {
+    render(<TaskItem task={baseTask} />);
+
+    expect(
+      screen.getByRole("button", { name: "Reordenar tarea" }),
+    ).toBeEnabled();
   });
 });

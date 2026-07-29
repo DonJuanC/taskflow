@@ -7,4 +7,6 @@ export interface Task {
   createdAt: Date;
   dueDate?: Date;
   priority?: "low" | "medium" | "high";
+  order?: number;
+  frequency?: "daily" | "weekly" | "monthly";
 }

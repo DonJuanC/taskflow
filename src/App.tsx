@@ -1,11 +1,13 @@
+import { lazy, Suspense } from "react";
 import { Routes, Route } from "react-router-dom";
 import { Navbar } from "./components/Navbar/Navbar";
 import { Register } from "./pages/Register/Register";
 import { Login } from "./pages/Login/Login";
 import { ProtectedRoute } from "./routes/ProtectedRoute";
-import { TaskForm } from "./components/TaskForm/TaskForm";
-import { TaskList } from "./components/TaskList/TaskList";
-import { SendSummaryButton } from "./components/SendSummary/SendSummaryButton";
+
+const TasksPage = lazy(() =>
+  import("./pages/Tasks/TasksPage").then((m) => ({ default: m.TasksPage })),
+);
 
 function App() {
   return (
@@ -16,11 +18,9 @@ function App() {
           path="/"
           element={
             <ProtectedRoute>
-              <>
-                <TaskForm />
-                <SendSummaryButton />
-                <TaskList />
-              </>
+              <Suspense fallback={<p className="route-loading">Cargando...</p>}>
+                <TasksPage />
+              </Suspense>
             </ProtectedRoute>
           }
         />

@@ -42,7 +42,23 @@ export function useTasks() {
             description: raw.description,
             completed: raw.completed,
             userId: raw.userId,
-            createdAt: (raw.createdAt as Timestamp)?.toDate(),
+            // serverTimestamp() no se puede resolver localmente: mientras el
+            // servidor no confirma el write, Firestore entrega este campo en
+            // null (createTask lo usa para createdAt). Sin este fallback,
+            // la tarea recién creada queda con createdAt undefined durante
+            // esa fracción de segundo y cualquier código que llame
+            // .getTime() sobre ella (como el orden de TaskList) explota,
+            // tumbando toda la pantalla. onSnapshot se vuelve a disparar
+            // con el valor real apenas el servidor confirma.
+            createdAt: raw.createdAt
+              ? (raw.createdAt as Timestamp).toDate()
+              : new Date(),
+            order: raw.order,
+            dueDate: raw.dueDate
+              ? (raw.dueDate as Timestamp).toDate()
+              : undefined,
+            priority: raw.priority,
+            frequency: raw.frequency,
           } as Task;
         });
         setTasks(data);
