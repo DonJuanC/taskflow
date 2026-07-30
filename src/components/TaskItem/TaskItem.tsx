@@ -4,6 +4,7 @@ import { CSS } from "@dnd-kit/utilities";
 import { updateTask, deleteTask } from "../../services/tasks";
 import type { Task } from "../../types/task";
 import { Input } from "../ui/Input/Input";
+import { Textarea } from "../ui/Textarea/Textarea";
 import { Button } from "../ui/Button/Button";
 import {
   PriorityPicker,
@@ -87,7 +88,9 @@ export function TaskItem({
     setIsEditing(false);
   }
 
-  function handleEditKeyDown(e: KeyboardEvent<HTMLInputElement>) {
+  function handleEditKeyDown(
+    e: KeyboardEvent<HTMLInputElement | HTMLTextAreaElement>,
+  ) {
     if (e.key === "Enter") {
       e.preventDefault();
       handleSaveEdit();
@@ -109,7 +112,7 @@ export function TaskItem({
               onKeyDown={handleEditKeyDown}
               autoFocus
             />
-            <Input
+            <Textarea
               label="Descripción"
               value={description}
               onChange={(e) => setDescription(e.target.value)}

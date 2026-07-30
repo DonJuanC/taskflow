@@ -11,11 +11,44 @@
   justify-content: center;
   padding: var(--space-7);
   background: linear-gradient(
-    160deg,
+    130deg,
     var(--color-accent) 0%,
-    var(--color-accent-hover) 100%
+    var(--color-accent-hover) 30%,
+    var(--color-accent) 55%,
+    var(--color-accent-hover) 80%,
+    var(--color-accent) 100%
   );
+  background-size: 260% 260%;
+  animation:
+    auth-gradient-flow 7s ease-in-out infinite,
+    auth-gradient-pulse 5s ease-in-out infinite;
   color: var(--color-accent-contrast);
+}
+
+/* Dos animaciones combinadas y desfasadas (7s / 5s) para que el degradado
+   nunca se sienta en loop obvio: una mueve la posición del fondo ampliado
+   (260%), la otra rota el tono y sube la saturación por momentos — juntas
+   dan una sensación de movimiento de color continuo, no solo un barrido. */
+@keyframes auth-gradient-flow {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+@keyframes auth-gradient-pulse {
+  0%,
+  100% {
+    filter: hue-rotate(0deg) saturate(1);
+  }
+  50% {
+    filter: hue-rotate(30deg) saturate(1.4);
+  }
 }
 
 .auth-brand-mark {
@@ -61,7 +94,8 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .auth-card {
+  .auth-card,
+  .auth-brand {
     animation: none;
   }
 }

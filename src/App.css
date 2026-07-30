@@ -23,3 +23,63 @@
     gap: var(--space-5);
   }
 }
+
+.tasks-layout {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+@media (min-width: 1024px) {
+  .page {
+    max-width: 1080px;
+  }
+
+  .tasks-layout {
+    display: grid;
+    grid-template-columns: 320px 1fr;
+    align-items: start;
+    gap: var(--space-5);
+  }
+
+  .tasks-sidebar {
+    position: sticky;
+    top: 64px;
+  }
+
+  /* Panel a juego con el del form: sin esto, el listado queda "al aire"
+     (sin borde ni fondo propio) al lado de un sidebar en caja, y con pocas
+     tareas de prueba la diferencia de alto entre ambos se siente como un
+     layout roto en vez de dos paneles de un mismo dashboard. */
+  .tasks-main {
+    min-height: 100%;
+    padding: var(--space-4);
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+  }
+
+  /* El form (TaskForm.css) tiene su propio @media (min-width: 640px) que
+     pone sus filas en horizontal para pantallas anchas — pensado para
+     cuando ocupa el ancho completo de la página. Dentro del sidebar fijo
+     de ~320px ese mismo viewport ancho dispara la regla igual, así que acá
+     se sobreescribe explícitamente de vuelta a columna (selector más
+     específico, gana sin importar el orden de imports). */
+  .tasks-sidebar .task-form-row-main,
+  .tasks-sidebar .task-form-row-meta {
+    flex-direction: column;
+    /* La regla de escritorio de .task-form-row-meta trae
+       align-items: flex-end (pensada para alinear la fecha y la prioridad
+       por abajo cuando están en fila). En columna, align-items pasa a
+       controlar el eje horizontal: sin este reset, los campos se encogen
+       a su ancho de contenido y quedan corridos hacia la derecha en vez
+       de ocupar todo el ancho como Título/Descripción/Frecuencia. */
+    align-items: stretch;
+  }
+  .tasks-sidebar .task-form-row-main .field:first-child,
+  .tasks-sidebar .task-form-row-main .field:last-child,
+  .tasks-sidebar .task-form-row-meta .field:first-child {
+    flex: none;
+    width: 100%;
+  }
+}

@@ -14,8 +14,14 @@ export function TasksPage() {
         <h1>Tus tareas</h1>
         <SendSummaryButton />
       </div>
-      <TaskForm />
-      <TaskList />
+      <div className="tasks-layout">
+        <aside className="tasks-sidebar">
+          <TaskForm />
+        </aside>
+        <div className="tasks-main">
+          <TaskList />
+        </div>
+      </div>
     </main>
   );
 }

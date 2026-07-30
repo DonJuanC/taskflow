@@ -10,6 +10,52 @@ SPA de gestión de tareas con autenticación de usuarios, persistencia en la nub
 
 Flujo completo verificado en producción: registro, login (email/password y Google), CRUD de tareas, filtros, reordenamiento por drag & drop, y envío de resumen por email.
 
+## Vistas de la app
+
+<table>
+<tr>
+<td width="50%">
+
+**Login**
+
+![Login](screenshots/01-login.gif)
+
+</td>
+<td width="50%">
+
+**Registro**
+
+![Registro](screenshots/02-register.png)
+
+</td>
+</tr>
+<tr>
+<td width="50%">
+
+**Tareas — modo claro** (con prioridad, fecha y filtros)
+
+![Tareas modo claro](screenshots/03-tasks-light.png)
+
+</td>
+<td width="50%">
+
+**Tareas — modo oscuro**
+
+![Tareas modo oscuro](screenshots/04-tasks-dark.png)
+
+</td>
+</tr>
+<tr>
+<td colspan="2">
+
+**Vista mobile** (mobile-first, drag & drop)
+
+![Vista mobile](screenshots/05-mobile.png)
+
+</td>
+</tr>
+</table>
+
 ## Stack técnico
 
 - **Frontend:** React 19 + TypeScript + Vite (bundler Rolldown) + React Router v7

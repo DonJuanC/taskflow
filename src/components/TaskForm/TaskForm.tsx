@@ -2,6 +2,7 @@ import { useState, type FormEvent } from "react";
 import { createTask } from "../../services/tasks";
 import { useAuth } from "../../hooks/useAuth";
 import { Input } from "../ui/Input/Input";
+import { Textarea } from "../ui/Textarea/Textarea";
 import { Button } from "../ui/Button/Button";
 import { PriorityPicker, type Priority } from "../ui/PriorityPicker/PriorityPicker";
 import {
@@ -64,8 +65,7 @@ export function TaskForm() {
           value={title}
           onChange={(e) => setTitle(e.target.value)}
         />
-        <Input
-          type="text"
+        <Textarea
           label="Descripción"
           placeholder="Descripción (opcional)"
           value={description}
