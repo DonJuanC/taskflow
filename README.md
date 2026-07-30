@@ -46,11 +46,11 @@ Flujo completo verificado en producción: registro, login (email/password y Goog
 </td>
 </tr>
 <tr>
-<td colspan="2">
+<td colspan="2" align="center">
 
 **Vista mobile** (mobile-first, drag & drop)
 
-![Vista mobile](screenshots/05-mobile.png)
+<img src="screenshots/05-mobile.png" width="280" alt="Vista mobile" />
 
 </td>
 </tr>
